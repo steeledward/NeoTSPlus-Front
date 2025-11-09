@@ -15,34 +15,53 @@ import SelectWithTooltip from "../common/SelectWithTooltip";
 
 import CommandParamsForm from "./CommandParamsForm";
 import ModalConfirmCommand from "../common/ModalConfirmCommand";
+import ModalResponseCommand from "../common/ModalResponseCommand";
+import ModalErrorCommand from "../common/ModalErrorCommand";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import type { Server } from "@/types/server.types";
-
 interface Props {
   server: Server;
   onClose: () => void;
 }
 
+// ActionPanel allows users to select and execute commands on a server
 const ActionPanel = ({ server, onClose }: Props) => {
+  // State for execution status, selected command, parameter values, and modal
   const [isExecuting, setIsExecuting] = useState(false);
   const [selectedCommand, setSelectedCommand] = useState("");
+
+  const [messageResponseCommand, setMessageResponseCommand] = useState(
+    "Comando ejecutado con éxito"
+  );
+  const [messageResponseResponse, setMessageResponseResponse] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [openModal, setOpenModal] = useState(false);
+  const [openModalResponse, setOpenModalResponse] = useState(false);
+  const [openModalError, setOpenModalError] = useState(false);
+
   const [paramsValues, setParamsValues] = useState<
     Record<string, string | number>
   >({});
-  const [openModal, setOpenModal] = useState(false);
 
+  // Find the definition for the currently selected command
   const commandDefinition = AVAILABLE_COMMANDS.find(
     (command) => command.id === selectedCommand
   );
 
+  // Default schema for commands without parameters
   const defaultSchema = z.object({});
 
+  // Use the schema for the selected command, or fallback to default
   const currentSchema = commandDefinition?.schema || defaultSchema;
 
+  // Infer form data type from schema
   type FormData = z.infer<typeof currentSchema>;
 
+  // React Hook Form setup for command parameters
   const {
     register,
     handleSubmit,
@@ -54,12 +73,14 @@ const ActionPanel = ({ server, onClose }: Props) => {
     mode: "onChange",
   });
 
+  // Handle command selection change
   const handleCommandChange = (value: string) => {
     setSelectedCommand(value);
     setParamsValues({});
     reset();
   };
 
+  // Handle parameter value change
   const handleParamChange = (paramId: string, value: string | number) => {
     setParamsValues((prev) => ({
       ...prev,
@@ -67,28 +88,69 @@ const ActionPanel = ({ server, onClose }: Props) => {
     }));
   };
 
+  // Check if exist path param and validate
+  const checkPathParam = (values: Record<string, string | number>) => {
+    const path = Object.entries(values).find(
+      ([key]) => key.toLowerCase().includes("path")
+    )?.[1];
+    console.log("path", path);
+    if (path) {
+      // Matches drive letter (C:\), UNC paths (\\server\share), or relative paths with backslashes
+      return /^(?:[a-zA-Z]:\\|\\\\[^\\]+\\[^\\]+|(?:\.{1,2}\\)?[^/:*?\"<>|]+\\)+[^/:*?\"<>|]*$/.test(path);
+    } else {
+      return true; // No path parameter found
+    }
+  };
+
+  // Execute the selected command with parameters
   const executedCommand = async () => {
     if (!commandDefinition) return;
 
     setIsExecuting(true);
 
     try {
+      const pathValid = checkPathParam(paramsValues);
+      
+      if (!pathValid) {
+        setErrorMessage("El parámetro de ruta no es válido.");
+        setOpenModalError(true);
+        setIsExecuting(false);
+        return;
+      }
+
+      // Gather parameter arguments in order
       const paramArgs = commandDefinition.params.map(
         (param) => paramsValues[param.id]
       );
-
+      
+      // Call the command's method
       const response = await (commandDefinition.method as CommandMethod)(
         ...paramArgs
       );
+
+      const jsonResponse = JSON.parse(response);
+
+      if (jsonResponse.success) {
+        setMessageResponseCommand(jsonResponse.command);
+        setMessageResponseResponse(jsonResponse.response);
+        setOpenModalResponse(true);
+      } else {
+        setErrorMessage(
+          jsonResponse.error || "Error desconocido al ejecutar el comando."
+        );
+        setOpenModalError(true);
+      }
+
       reset();
-      // console.log(response);
     } catch (error) {
+      // Log any errors during execution
       console.log(error);
     } finally {
       setIsExecuting(false);
     }
   };
 
+  // Disable the execute button if not ready
   const isDisabled =
     isExecuting ||
     !commandDefinition ||
@@ -97,6 +159,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
 
   return (
     <>
+      {/* Modal to confirm command execution */}
       <ModalConfirmCommand
         open={openModal}
         onConfirm={() => {
@@ -106,6 +169,21 @@ const ActionPanel = ({ server, onClose }: Props) => {
         onCancel={() => {
           setOpenModal(false);
         }}
+      />
+      <ModalResponseCommand
+        open={openModalResponse}
+        onConfirm={() => {
+          setOpenModalResponse(false);
+        }}
+        command={messageResponseCommand}
+        response={messageResponseResponse}
+      />
+      <ModalErrorCommand
+        open={openModalError}
+        onConfirm={() => {
+          setOpenModalError(false);
+        }}
+        error={errorMessage}
       />
       <Card className="mt-6">
         <CardHeader className="pb-4">
@@ -118,6 +196,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
                 Ejecuta acciones en este servidor
               </CardDescription>
             </div>
+            {/* Close button for the panel */}
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="w-4 h-4" />
             </Button>
@@ -126,8 +205,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              {/* // * Available commands */}
-
+              {/* Command selection dropdown with tooltips */}
               <SelectWithTooltip
                 id="command-select"
                 label="Selecciona un comando"
@@ -142,6 +220,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
               />
             </div>
 
+            {/* Dynamic form for command parameters */}
             <CommandParamsForm
               commandDefinition={commandDefinition as CommandDefinition}
               paramsValues={paramsValues}
@@ -152,12 +231,14 @@ const ActionPanel = ({ server, onClose }: Props) => {
             />
           </div>
 
+          {/* Form to submit the command for execution */}
           <form
             onSubmit={handleSubmit(() => {
               setOpenModal(true);
             })}
             className="flex pt-4 space-x-3"
           >
+            {/* Execute button, disabled if not ready */}
             <Button
               disabled={isDisabled}
               className="disabled:opacity-50"
@@ -167,7 +248,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
               {isExecuting ? "Ejecutando..." : "Ejecutar Acción"}
             </Button>
 
-            {/* // * I leave here because later we can implement logs */}
+            {/* Placeholder for future logs button */}
             {/* <Button variant="outline">
             <Eye className="mr-2 w-4 h-4" />
             Ver Logs

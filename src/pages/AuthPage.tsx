@@ -19,7 +19,7 @@ import useAuthForm from "@/hooks/auth/useAuthForm";
 import Logo from "@/assets/logo/Logo_cuadrado.png";
 
 const AuthPage = () => {
-  const { register, handleSubmit, errors, onSubmit, isLogin, toogleLogin } =
+  const { register, handleSubmit, errors, onSubmit, isLogin, /*toogleLogin*/ } =
     useAuthForm();
 
   return (

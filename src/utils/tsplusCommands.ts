@@ -1,18 +1,59 @@
 import TSPlusAPI from "@/services/ts-plus";
 import type { CommandDefinition } from "@/types/command.types";
 import {
-  volumeActivationSchema,
+  // volumeActivationSchema,
   volumeEnableDisableSchema,
   volumeInstallSchema,
 } from "@/schemas/ts-plusCommandsSchema";
 
 const AVAILABLE_COMMANDS: CommandDefinition[] = [
+  {
+    id: "backup_data",
+    name: "Backup",
+    description:
+      "Comando para hacer una copia de seguridad de los datos y configuraciones de TSplus.",
+    params: [
+      { id: "path", name: "Ruta de Backup", type: "text" },
+      {
+        id: "silentMode",
+        name: "Modo Silencioso",
+        type: "select",
+        selectOptions: [
+          { id: "Normal", value: "Normal" },
+          { id: "/silent", value: "Silencioso" },
+        ],
+        placeholder: "Método de Backup",
+      },
+    ],
+    method: TSPlusAPI.backupData,
+  },
+  {
+    id: "restore_data",
+    name: "Restaurar",
+    description: "Comando para restaurar datos y configuraciones de TSplus.",
+    params: [
+      { id: "restorePath", name: "Ruta para Restaurar", type: "text" },
+      {
+        id: "silentMode",
+        name: "Modo Silencioso",
+        type: "select",
+        selectOptions: [
+          { id: "Normal", value: "Normal" },
+          { id: "/silent", value: "Silencioso" },
+        ],
+        placeholder: "Método de Respaldo",
+      },
+    ],
+    method: TSPlusAPI.restoreData,
+  },
   // === 2FA ===
   {
     id: "2FA_Add_Groups",
     name: "2FA - Añadir Grupo",
     description: "Comando para añadir varios grupos de 2FA.",
-    params: [{ id: "group", name: "Grupo", type: "text" }],
+    params: [
+      { id: "group", name: "Grupo", type: "text" }
+    ],
     method: TSPlusAPI.add2FAGroups,
   },
   {
@@ -42,7 +83,6 @@ const AVAILABLE_COMMANDS: CommandDefinition[] = [
     params: [{ id: "user", name: "Usuario", type: "text" }],
     method: TSPlusAPI.reset2FA,
   },
-
   // === Licencias ===
   {
     id: "activate",
@@ -223,24 +263,6 @@ const AVAILABLE_COMMANDS: CommandDefinition[] = [
   //   method: TSPlusAPI.removeWebCredentials,
   // },
 
-  // // === Backup / Restore ===
-  // {
-  //   id: "backup_data",
-  //   name: "Backup",
-  //   description:
-  //     "Comando para hacer una copia de seguridad de los datos y configuraciones de TSplus.",
-  //   params: [{ id: "users", name: "Usuarios", type: "text" }],
-  //   method: TSPlusAPI.backupData,
-  // },
-  // {
-  //   id: "restore_data",
-  //   name: "Restaurar",
-  //   description: "Comando para restaurar datos y configuraciones de TSplus.",
-  //   params: [{ id: "users", name: "Usuarios", type: "text" }],
-  //   method: TSPlusAPI.restoreData,
-  // },
-
-  // // === Sistema / Utilidades ===
   // {
   //   id: "audit",
   //   name: "Correr una Auditoria de sistema",

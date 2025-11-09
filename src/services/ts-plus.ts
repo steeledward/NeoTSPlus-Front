@@ -344,10 +344,11 @@ class TSPlusAPI {
   // Método para hacer backup de datos
   static async backupData(optionalPath?: string, silent: boolean = false) {
     try {
-      const response = await api.post(`/backup_data/`, {
+      const response = await api.post(`/commands/backup_data/`, {
         optionalPath, // Enviamos la ruta opcional
         silent, // Controlamos el modo silencioso
       });
+      
       return response.data;
     } catch (error: any) {
       throw new Error(`Error al hacer backup de datos: ${error.message}`);
@@ -355,10 +356,10 @@ class TSPlusAPI {
   }
 
   // Método para restaurar datos
-  static async restoreData(backupPath: string, silent: boolean = false) {
+  static async restoreData(restorePath: string, silent: boolean = false) {
     try {
-      const response = await api.put(`/restore_data/`, {
-        backupPath,
+      const response = await api.put(`/commands/restore_data/`, {
+        restorePath,
         silent,
       });
       return response.data;

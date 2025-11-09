@@ -6,8 +6,9 @@ import type {
 } from "@/types/server.types";
 import api from "@/utils/api";
 
-const BASE_URL = "http://localhost:8000/servers";
+// const BASE_URL = "http://localhost:8000/servers";
 
+/*
 const simulateApiCall = (data: any) => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -15,7 +16,9 @@ const simulateApiCall = (data: any) => {
     }, 1000);
   });
 };
+*/
 
+/*
 const MOCKS_GROUP_SERVERS = [
   {
     nombre: "Grupo BBVA",
@@ -30,7 +33,9 @@ const MOCKS_GROUP_SERVERS = [
     guid: "some-guid-2",
   },
 ];
+*/
 
+/*
 const MOCK_SERVERS: Server[] = [
   {
     ip: "192.168.1.1",
@@ -49,7 +54,7 @@ const MOCK_SERVERS: Server[] = [
     guid: "some-guid-2",
   },
 ];
-
+*/
 class Servers {
   static async createGroupServer(
     createGroupServer: RequestGroupServer

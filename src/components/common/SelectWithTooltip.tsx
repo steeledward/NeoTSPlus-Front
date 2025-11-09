@@ -8,12 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 export interface SelectOption {
@@ -60,18 +54,16 @@ const SelectWithTooltip = ({
         <SelectContent className={cn("overflow-y-auto", contentClassName)}>
           <SelectGroup>
             {options.map((option) => (
-              <TooltipProvider key={option.id}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <SelectItem value={option.id}>{option.label}</SelectItem>
-                  </TooltipTrigger>
+              <SelectItem value={option.id} key={option.id}>
+                <div className="flex flex-col">
+                  <span>{option.label}</span>
                   {option.description && (
-                    <TooltipContent side="bottom">
-                      <p>{option.description}</p>
-                    </TooltipContent>
+                    <span className="text-xs text-muted-foreground leading-tight mt-0.5">
+                      {option.description}
+                    </span>
                   )}
-                </Tooltip>
-              </TooltipProvider>
+                </div>
+              </SelectItem>
             ))}
           </SelectGroup>
         </SelectContent>

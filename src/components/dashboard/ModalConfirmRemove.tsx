@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { AlertTriangle, Trash2, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -42,6 +43,7 @@ const ModalConfirmRemove = ({
   itemType,
   dialogTrigger = true,
 }: ModalConfirmRemoveProps) => {
+  const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Create schema for validation
@@ -78,7 +80,7 @@ const ModalConfirmRemove = ({
       );
       form.reset();
       setOpen(false);
-    } catch (error) {
+    } catch {
       toast.error(
         `Error al eliminar ${itemType === "server" ? "servidor" : "grupo"}`
       );
@@ -101,7 +103,7 @@ const ModalConfirmRemove = ({
         <DialogHeader>
           <DialogTitle className="flex gap-2 items-center text-destructive">
             <AlertTriangle className="w-5 h-5" />
-            Confirmar eliminación
+            {t('confirm')} {t('remove')}
           </DialogTitle>
           <DialogDescription className="pt-2">
             Estás a punto de eliminar{" "}
@@ -113,8 +115,7 @@ const ModalConfirmRemove = ({
 
         <div className="p-3 my-2 rounded-md border bg-destructive/10 border-destructive/20">
           <p className="text-sm font-medium text-destructive">
-            Para confirmar, escribe el nombre exacto del{" "}
-            {itemType === "server" ? "servidor" : "grupo"}:
+            {t('confirm_prompt', { type: t(itemType) })}
             <span className="font-bold"> {itemName}</span>
           </p>
         </div>
@@ -134,7 +135,7 @@ const ModalConfirmRemove = ({
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder={`Escribe ${itemName} para confirmar`}
+                      placeholder={t('confirm_placeholder', { name: itemName })}
                       {...field}
                       disabled={isDeleting}
                       className={

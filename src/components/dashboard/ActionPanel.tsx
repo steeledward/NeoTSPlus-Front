@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   CardContent,
@@ -9,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { Play } from "lucide-react";
-import AVAILABLE_COMMANDS from "@/utils/tsplusCommands";
+import { getAvailableCommands } from "@/utils/tsplusCommands";
 import type { CommandDefinition, CommandMethod } from "@/types/command.types";
 import SelectWithTooltip from "../common/SelectWithTooltip";
 
@@ -29,12 +30,13 @@ interface Props {
 
 // ActionPanel allows users to select and execute commands on a server
 const ActionPanel = ({ server, onClose }: Props) => {
+  const { t } = useTranslation();
   // State for execution status, selected command, parameter values, and modal
   const [isExecuting, setIsExecuting] = useState(false);
   const [selectedCommand, setSelectedCommand] = useState("");
 
   const [messageResponseCommand, setMessageResponseCommand] = useState(
-    "Comando ejecutado con éxito"
+    t('action_panel_success')
   );
   const [messageResponseResponse, setMessageResponseResponse] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -47,8 +49,10 @@ const ActionPanel = ({ server, onClose }: Props) => {
     Record<string, string | number>
   >({});
 
+  // Get translated commands dynamically
+  const availableCommands = getAvailableCommands(t);
   // Find the definition for the currently selected command
-  const commandDefinition = AVAILABLE_COMMANDS.find(
+  const commandDefinition = availableCommands.find(
     (command) => command.id === selectedCommand
   );
 
@@ -94,9 +98,9 @@ const ActionPanel = ({ server, onClose }: Props) => {
       ([key]) => key.toLowerCase().includes("path")
     )?.[1];
     console.log("path", path);
-    if (path) {
+    if (typeof path === 'string' && path) {
       // Matches drive letter (C:\), UNC paths (\\server\share), or relative paths with backslashes
-      return /^(?:[a-zA-Z]:\\|\\\\[^\\]+\\[^\\]+|(?:\.{1,2}\\)?[^/:*?\"<>|]+\\)+[^/:*?\"<>|]*$/.test(path);
+      return /^(?:[a-zA-Z]:\\|\\\\[^\\]+\\[^\\]+|(?:\.{1,2}\\)?[^/:*?<>|]+\\)+[^/:*?<>|]*$/.test(path);
     } else {
       return true; // No path parameter found
     }
@@ -112,10 +116,10 @@ const ActionPanel = ({ server, onClose }: Props) => {
       const pathValid = checkPathParam(paramsValues);
       
       if (!pathValid) {
-        setErrorMessage("El parámetro de ruta no es válido.");
-        setOpenModalError(true);
-        setIsExecuting(false);
-        return;
+        setErrorMessage(t('action_panel_invalid_path'));
+  setOpenModalError(true);
+  setIsExecuting(false);
+  return;
       }
 
       // Gather parameter arguments in order
@@ -131,12 +135,12 @@ const ActionPanel = ({ server, onClose }: Props) => {
       const jsonResponse = JSON.parse(response);
 
       if (jsonResponse.success) {
-        setMessageResponseCommand(jsonResponse.command);
+        setMessageResponseCommand(jsonResponse.command || t('action_panel_success'));
         setMessageResponseResponse(jsonResponse.response);
         setOpenModalResponse(true);
       } else {
         setErrorMessage(
-          jsonResponse.error || "Error desconocido al ejecutar el comando."
+          jsonResponse.error || t('action_panel_unknown_error')
         );
         setOpenModalError(true);
       }
@@ -190,14 +194,14 @@ const ActionPanel = ({ server, onClose }: Props) => {
           <div className="flex justify-between items-center">
             <div>
               <CardTitle className="text-lg">
-                Panel de Control - {server.nombre}
+                {t('action_panel_title', { server: server.nombre })}
               </CardTitle>
               <CardDescription>
-                Ejecuta acciones en este servidor
+                {t('action_panel_description')}
               </CardDescription>
             </div>
             {/* Close button for the panel */}
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={onClose} aria-label={t('action_panel_close')}>
               <X className="w-4 h-4" />
             </Button>
           </div>
@@ -208,8 +212,8 @@ const ActionPanel = ({ server, onClose }: Props) => {
               {/* Command selection dropdown with tooltips */}
               <SelectWithTooltip
                 id="command-select"
-                label="Selecciona un comando"
-                options={AVAILABLE_COMMANDS.map((command) => ({
+                label={t('action_panel_select_command')}
+                options={availableCommands.map((command) => ({
                   id: command.id,
                   label: command.name,
                   description: command.description,
@@ -245,13 +249,13 @@ const ActionPanel = ({ server, onClose }: Props) => {
               variant="gradient"
             >
               <Play className="mr-2 w-4 h-4" />
-              {isExecuting ? "Ejecutando..." : "Ejecutar Acción"}
+              {isExecuting ? t('action_panel_executing') : t('action_panel_execute')}
             </Button>
 
             {/* Placeholder for future logs button */}
             {/* <Button variant="outline">
             <Eye className="mr-2 w-4 h-4" />
-            Ver Logs
+            {t('action_panel_view_logs')}
           </Button> */}
           </form>
         </CardContent>

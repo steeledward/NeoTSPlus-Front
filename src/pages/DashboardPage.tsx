@@ -7,9 +7,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import CreateServerGroupModal from "@/components/dashboard/ModalCreateGroup";
 import useServerGroup from "@/hooks/userServerGroup";
 import { useServerContext } from "@/context/ServerContext";
+import LanguageSelector from "@/components/common/LanguageSelector";
+import { useTranslation } from "react-i18next";
 
 const DashboardPage = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const { serverGroups, isLoading } = useServerGroup();
   const { selectedServer, onServerSelect } = useServerContext();
   const [isVisible, setIsVisible] = useState(false);
@@ -23,6 +26,12 @@ const DashboardPage = () => {
     <DashboardLayout>
       <div className="p-6">
         <div className="mx-auto max-w-7xl">
+          <h1 className="mb-6 text-4xl font-extrabold text-gray-900">
+            {t('control_panel')}
+          </h1>
+          <div className="flex justify-end mb-2">
+            <LanguageSelector />
+          </div>
           <motion.div
             className="flex justify-between items-end mb-8"
             initial={{ opacity: 0, y: -20 }}
@@ -31,10 +40,10 @@ const DashboardPage = () => {
           >
             <div>
               <h1 className="mb-2 text-3xl font-bold text-transparent bg-clip-text card-gradient">
-                Bienvenido, {user?.name}
+                {t('dashboard_welcome', { name: user?.name })}
               </h1>
               <p className="text-gray-600">
-                Gestiona tus servidores y ejecuta acciones desde un solo lugar
+                {t('dashboard_description')}
               </p>
             </div>
             <CreateServerGroupModal />

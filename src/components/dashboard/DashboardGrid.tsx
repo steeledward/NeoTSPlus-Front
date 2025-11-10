@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 import ServerCard from "./ServerCard";
 import { motion } from "framer-motion";
@@ -15,6 +16,7 @@ interface Props {
 
 const DashboardGrid = ({ groupServerGuid, groupName }: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useTranslation();
   const { selectedServer, onServerSelect } = useServerContext();
   const { servers, isLoading } = useServer(groupServerGuid);
   const { removeGroupServer, isOpenConfirmRemove, setOpenConfirmModal } =
@@ -37,14 +39,14 @@ const DashboardGrid = ({ groupServerGuid, groupName }: Props) => {
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Servidores</h2>
+  <h2 className="text-xl font-bold text-gray-900">{t('dashboard_grid_servers')}</h2>
 
         <div className="flex gap-3 items-center">
           <ModalCreateServer groupGuid={groupServerGuid} />
           <div className="relative">
             <input
               type="text"
-              placeholder="Buscar servidor..."
+              placeholder={t('dashboard_grid_search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="px-4 py-2 pr-10 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -76,7 +78,7 @@ const DashboardGrid = ({ groupServerGuid, groupName }: Props) => {
 
       {filteredServers.length === 0 ? (
         <div className="p-8 text-center bg-gray-50 rounded-lg">
-          <p className="text-gray-500">No se encontraron servidores</p>
+          <p className="text-gray-500">{t('dashboard_grid_no_servers')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

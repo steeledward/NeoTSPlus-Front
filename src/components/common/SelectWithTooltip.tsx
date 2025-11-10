@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -27,17 +28,20 @@ interface Props {
   contentClassName?: string;
 }
 
+
 const SelectWithTooltip = ({
   id,
   label,
   options,
   value,
   onChange,
-  placeholder = "Seleccionar...",
+  placeholder,
   className = "w-full",
   contentClassName = "max-h-[200px]",
 }: Props) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const resolvedPlaceholder = placeholder ?? t('select') + '...';
 
   return (
     <div className="space-y-2">
@@ -49,7 +53,7 @@ const SelectWithTooltip = ({
         onValueChange={onChange}
       >
         <SelectTrigger id={id} className={className}>
-          <SelectValue placeholder={placeholder} />
+            <SelectValue placeholder={resolvedPlaceholder} />
         </SelectTrigger>
         <SelectContent className={cn("overflow-y-auto", contentClassName)}>
           <SelectGroup>

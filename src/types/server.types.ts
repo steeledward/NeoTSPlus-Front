@@ -18,6 +18,7 @@ export interface Server {
   descripcion: string;
   grupo_guid: string;
   guid: string;
+  status?: string;
 }
 
 export interface RequestServer {

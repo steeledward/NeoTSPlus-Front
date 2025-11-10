@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
 import { Activity, LogOut, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -11,14 +12,15 @@ interface Props {
 
 const Sidebar = ({ isMobileOpen, setIsMobileOpen }: Props) => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const currentPath = useLocation().pathname;
 
   const menuItems = [
-    { icon: Activity, label: "Servidores", path: "/dashboard", count: null },
-    // { icon: Activity, label: "Monitoreo", path: "/monitoring", count: null },
-    // { icon: Users, label: "Usuarios", path: "/users", count: null },
-    // { icon: Settings, label: "Configuración", path: "/settings", count: null },
+    { icon: Activity, label: t('sidebar_servers'), path: "/dashboard", count: null },
+    // { icon: Activity, label: t('sidebar_monitoring'), path: "/monitoring", count: null },
+    // { icon: Users, label: t('sidebar_users'), path: "/users", count: null },
+    // { icon: Settings, label: t('sidebar_settings'), path: "/settings", count: null },
   ];
 
   const handleLogout = () => {
@@ -60,6 +62,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }: Props) => {
               size="sm"
               className="lg:hidden"
               onClick={() => setIsMobileOpen(false)}
+              aria-label={t('sidebar_close')}
             >
               <X className="w-4 h-4" />
             </Button>
@@ -118,7 +121,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }: Props) => {
               className="justify-start w-full text-red-600 hover:text-red-700 hover:bg-red-50"
             >
               <LogOut className="mr-3 w-5 h-5" />
-              Cerrar Sesión
+              {t('sidebar_logout')}
             </Button>
           </div>
         </div>

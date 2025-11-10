@@ -21,21 +21,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, Server, Loader2, Globe, Link } from "lucide-react";
 import useCreateServer from "@/hooks/useCreateServer";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   groupGuid: string;
 }
 
 const ModalCreateServer = ({ groupGuid }: Props) => {
-  const { open, setOpen, isLoading, form, onSubmit, handleCancel } =
-    useCreateServer();
+  const { open, setOpen, isLoading, form, onSubmit, handleCancel } = useCreateServer();
+  const { t } = useTranslation();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="w-4 h-4" />
-          Crear Servidor
+          {t('create_server')}
         </Button>
       </DialogTrigger>
 
@@ -43,11 +44,10 @@ const ModalCreateServer = ({ groupGuid }: Props) => {
         <DialogHeader>
           <DialogTitle className="flex gap-4 items-center">
             <Server className="w-6 h-6 text-blue-600" />
-            Crear Nuevo Servidor
+            {t('create_new_server')}
           </DialogTitle>
           <DialogDescription className="mt-2.5">
-            Agrega un nuevo servidor al sistema. Completa todos los campos
-            requeridos.
+            {t('create_server_description', 'Add a new server to the system. Complete all required fields.')}
           </DialogDescription>
         </DialogHeader>
 
@@ -154,7 +154,7 @@ const ModalCreateServer = ({ groupGuid }: Props) => {
                 onClick={handleCancel}
                 disabled={isLoading}
               >
-                Cancelar
+                {t('cancel')}
               </Button>
               <Button
                 onClick={form.handleSubmit((data) => onSubmit(data, groupGuid))}
@@ -164,12 +164,12 @@ const ModalCreateServer = ({ groupGuid }: Props) => {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creando Servidor...
+                    {t('creating_server')}
                   </>
                 ) : (
                   <>
                     <Server className="w-4 h-4" />
-                    Crear Servidor
+                    {t('create_server')}
                   </>
                 )}
               </Button>

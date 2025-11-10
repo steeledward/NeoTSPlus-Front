@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardGrid from "./DashboardGrid";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ interface ServerGroupCardsProps {
 
 const ServerGroupCards = ({ groups, isLoading }: ServerGroupCardsProps) => {
   const [expandedGroupId, setExpandedGroupId] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroupId(expandedGroupId === groupId ? null : groupId);
@@ -67,10 +69,10 @@ const ServerGroupCards = ({ groups, isLoading }: ServerGroupCardsProps) => {
                 </p>
               </div>
             </div>
-            <Button variant="gradient">
+            <Button variant="gradient" onClick={() => toggleGroup(group.guid)}>
               {expandedGroupId === group.guid
-                ? "Ocultar servidores"
-                : "Ver servidores"}
+                ? t('hide_servers', 'Hide servers')
+                : t('view_servers', 'View servers')}
             </Button>
           </div>
 

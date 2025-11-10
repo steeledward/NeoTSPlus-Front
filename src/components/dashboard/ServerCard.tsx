@@ -4,6 +4,7 @@ import { Server, ChevronRight } from "lucide-react";
 import DropdownServer from "./DropdownServer";
 import ModalConfirmRemove from "./ModalConfirmRemove";
 import useRemoveServer from "@/hooks/useRemoveServer";
+// import { useTranslation } from "react-i18next";
 
 interface Props {
   server: ServerType;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const ServerCard = ({ server, isSelected, onClick }: Props) => {
+  // const { t } = useTranslation();
   const isOnline = true;
   const IconComponent = Server;
 

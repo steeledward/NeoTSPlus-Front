@@ -21,17 +21,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Plus, Server, Loader2 } from "lucide-react";
 import useCreateServerGroup from "@/hooks/useCreateServerGroup";
+import { useTranslation } from "react-i18next";
 
 const CreateServerGroupModal = () => {
-  const { open, setOpen, isLoading, form, onSubmit, handleCancel } =
-    useCreateServerGroup();
+  const { open, setOpen, isLoading, form, onSubmit, handleCancel } = useCreateServerGroup();
+  const { t } = useTranslation();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="w-4 h-4" />
-          Crear Grupo de Servidores
+          {t('create_server_group')}
         </Button>
       </DialogTrigger>
 
@@ -39,11 +40,10 @@ const CreateServerGroupModal = () => {
         <DialogHeader>
           <DialogTitle className="flex gap-4 items-center">
             <Server className="w-6 h-6 text-blue-600" />
-            Crear Nuevo Grupo de Servidores
+            {t('create_new_group')}
           </DialogTitle>
           <DialogDescription className="mt-2.5">
-            Crea un nuevo grupo para organizar tus servidores. Completa los
-            campos requeridos.
+            {t('create_group_description', 'Create a new group to organize your servers. Complete all required fields.')}
           </DialogDescription>
         </DialogHeader>
 
@@ -100,7 +100,7 @@ const CreateServerGroupModal = () => {
                 onClick={handleCancel}
                 disabled={isLoading}
               >
-                Cancelar
+                {t('cancel')}
               </Button>
               <Button
                 onClick={form.handleSubmit(onSubmit)}
@@ -110,12 +110,12 @@ const CreateServerGroupModal = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Creando...
+                    {t('creating')}
                   </>
                 ) : (
                   <>
                     <Plus className="w-4 h-4" />
-                    Crear Grupo
+                    {t('create_group')}
                   </>
                 )}
               </Button>

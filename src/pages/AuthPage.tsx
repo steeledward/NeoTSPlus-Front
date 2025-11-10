@@ -17,14 +17,16 @@ import {
 } from "@/utils/animations";
 import useAuthForm from "@/hooks/auth/useAuthForm";
 import Logo from "@/assets/logo/Logo_cuadrado.png";
+import LanguageSelector from "@/components/common/LanguageSelector";
+import { useTranslation } from "react-i18next";
 
 const AuthPage = () => {
-  const { register, handleSubmit, errors, onSubmit, isLogin, /*toogleLogin*/ } =
-    useAuthForm();
+  const { register, handleSubmit, errors, onSubmit, isLogin, /*toogleLogin*/ } = useAuthForm();
+  const { t } = useTranslation();
 
   return (
     <motion.div
-      className="flex justify-center items-center p-4 min-h-screen bg-app-gradient-light"
+      className="flex justify-center items-center p-4 min-h-screen bg-app-gradient-light relative"
       initial="hidden"
       animate="visible"
       variants={containerVariants}
@@ -37,7 +39,10 @@ const AuthPage = () => {
         className="w-full max-w-lg"
       >
         <Card className="w-full border-0 shadow-2xl backdrop-blur-sm bg-white/80">
-          <CardHeader className="pb-2 text-center">
+          <CardHeader className="pb-2 text-center relative">
+            <div className="absolute right-0 top-0 mt-2 mr-4">
+              <LanguageSelector />
+            </div>
             <motion.div
               className="flex relative top-2 justify-center items-center px-2 mx-auto mb-4 w-72 h-auto rounded-xl"
               initial={{ scale: 0, rotate: -180 }}
@@ -57,7 +62,7 @@ const AuthPage = () => {
               transition={{ delay: 0.4, duration: 0.5 }}
             >
               <CardTitle className="text-2xl font-bold text-transparent bg-clip-text card-gradient">
-                {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
+                {isLogin ? t('login') : t('register')}
               </CardTitle>
             </motion.div>
             <motion.div
@@ -74,9 +79,7 @@ const AuthPage = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {isLogin
-                      ? "Accede a tu panel de servidores"
-                      : "Únete a nuestra plataforma"}
+                    {isLogin ? t('login_desc') : t('register_desc')}
                   </motion.span>
                 </AnimatePresence>
               </CardDescription>
@@ -96,11 +99,11 @@ const AuthPage = () => {
                     variants={formItemVariants}
                     custom={0}
                   >
-                    <Label htmlFor="name">Nombre completo</Label>
+                    <Label htmlFor="name">{t('full_name')}</Label>
                     <Input
                       id="name"
                       type="text"
-                      placeholder="Tu nombre completo"
+                      placeholder={t('full_name_placeholder')}
                       className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                       {...register("name")}
                     />
@@ -120,11 +123,11 @@ const AuthPage = () => {
                 animate="visible"
                 custom={isLogin ? 0 : 1}
               >
-                <Label htmlFor="email">Correo electrónico</Label>
+                <Label htmlFor="email">{t('email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder={t('email_placeholder')}
                   className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                   {...register("email")}
                 />
@@ -140,11 +143,11 @@ const AuthPage = () => {
                 animate="visible"
                 custom={isLogin ? 1 : 2}
               >
-                <Label htmlFor="password">Contraseña</Label>
+                <Label htmlFor="password">{t('password')}</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={t('password_placeholder')}
                   className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                   {...register("password")}
                 />
@@ -167,12 +170,12 @@ const AuthPage = () => {
                     custom={3}
                   >
                     <Label htmlFor="confirmPassword">
-                      Confirmar contraseña
+                      {t('confirm_password')}
                     </Label>
                     <Input
                       id="confirmPassword"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={t('confirm_password_placeholder')}
                       className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                       {...register("confirmPassword")}
                     />
@@ -203,48 +206,12 @@ const AuthPage = () => {
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
                     >
-                      {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
+                      {isLogin ? t('login_button') : t('register_button')}
                     </motion.span>
                   </AnimatePresence>
                 </Button>
               </motion.div>
             </motion.div>
-
-            {/* // * We'll use this later */}
-            {/* <motion.div
-                className="text-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      toogleLogin();
-                    }}
-                    className="text-sm text-gray-600 transition-colors hover:text-blue-600"
-                  >
-                    <AnimatePresence mode="wait">
-                      <motion.span
-                        key={isLogin ? "register-link" : "login-link"}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {isLogin
-                          ? "¿No tienes cuenta? Regístrate"
-                          : "¿Ya tienes cuenta? Inicia sesión"}
-                      </motion.span>
-                    </AnimatePresence>
-                  </Button>
-                </motion.div>
-              </motion.div> */}
           </CardContent>
         </Card>
       </motion.form>

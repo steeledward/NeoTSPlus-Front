@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,12 +17,13 @@ interface Props {
 }
 
 const ModalConfirmCommand = ({ open, onConfirm, onCancel }: Props) => {
+  const { t } = useTranslation();
   return (
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl">
-            ¿Desea ejecutar el comando?
+            {t('confirm_execute_command')}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-gray-600 text-md">
             Esta acción ejecutará el comando seleccionado. Por favor, verifique
@@ -29,8 +31,8 @@ const ModalConfirmCommand = ({ open, onConfirm, onCancel }: Props) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Confirmar</AlertDialogAction>
+          <AlertDialogCancel onClick={onCancel}>{t('cancel')}</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>{t('accept')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -8,6 +8,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useId } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   command: string;
@@ -18,16 +19,17 @@ interface Props {
 
 const ModalConfirmCommand = ({ open, onConfirm, command, response }: Props) => {
   const descriptionId = useId();
+  const { t } = useTranslation();
   return (
     <AlertDialog open={open}>
       <AlertDialogContent aria-describedby={descriptionId}>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl">
-            Resultado al ejecutar comando
+            {t('command_result')}
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogDescription id={descriptionId} className="mb-2">
-          El siguiente resultado se muestra en formato de terminal para mayor claridad y accesibilidad.
+          {t('terminal_description')}
         </AlertDialogDescription>
         <div
           className="bg-black text-green-400 font-mono rounded p-4 text-sm max-h-64 overflow-auto border border-gray-700 shadow-inner"
@@ -38,7 +40,7 @@ const ModalConfirmCommand = ({ open, onConfirm, command, response }: Props) => {
           <br />$ {response}
         </div>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={onConfirm}>Enterado</AlertDialogAction>
+          <AlertDialogAction onClick={onConfirm}>{t('acknowledge')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

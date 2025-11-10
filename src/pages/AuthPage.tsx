@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
+import React from "react";
 import {
   containerVariants,
   cardVariants,
@@ -17,54 +18,87 @@ import {
 } from "@/utils/animations";
 import useAuthForm from "@/hooks/auth/useAuthForm";
 import Logo from "@/assets/logo/Logo_cuadrado.png";
+// import { useEffect, useState } from "react";
 import LanguageSelector from "@/components/common/LanguageSelector";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
 
-const AuthPage = () => {
-  const { register, handleSubmit, errors, onSubmit, isLogin, /*toogleLogin*/ } = useAuthForm();
-  const { t } = useTranslation();
 
+
+
+// Memoized motion.div for logo
+const MemoLogoMotionDiv = React.memo(function MemoLogoMotionDiv() {
   return (
     <motion.div
-      className="flex justify-center items-center p-4 min-h-screen bg-app-gradient-light relative"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
+      className="flex relative top-2 justify-center items-center px-2 mx-auto mb-4 w-72 h-auto rounded-xl"
+      initial={{ scale: 0, rotate: -180 }}
+      animate={{ scale: 1, rotate: 0 }}
+      transition={{
+        type: "spring",
+        stiffness: 260,
+        damping: 20,
+        delay: 0.3,
+      }}
     >
-      <motion.form
-        onSubmit={handleSubmit(onSubmit)}
-        variants={cardVariants}
+      <img src={Logo} alt="Logo" className="w-fit h-fit" />
+    </motion.div>
+  );
+});
+
+// Memoized motion.div for title
+const MemoTitleMotionDiv = React.memo(function MemoTitleMotionDiv(props: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4, duration: 0.5 }}
+    >
+      {props.children}
+    </motion.div>
+  );
+});
+
+const AuthPage = () => {
+
+  const { register, handleSubmit, errors, onSubmit, isLogin, reset, clearErrors } = useAuthForm();
+  const { t, i18n } = useTranslation();
+
+  // Reset form and clear errors when language changes to update validation messages
+  useEffect(() => {
+    reset();
+    clearErrors();
+  }, [i18n.language, reset, clearErrors]);
+
+
+
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-blue-100 via-white to-blue-300">
+      {/* Minimalist background only, no logo */}
+      {/* Auth form content */}
+      <motion.div
+        className="flex justify-center items-center p-4 min-h-screen relative z-10"
         initial="hidden"
         animate="visible"
-        className="w-full max-w-lg"
+        variants={containerVariants}
       >
-        <Card className="w-full border-0 shadow-2xl backdrop-blur-sm bg-white/80">
+        <motion.form
+          onSubmit={handleSubmit(onSubmit)}
+          variants={cardVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-lg"
+        >
+  <Card className="w-full border-0 shadow-2xl backdrop-blur-md bg-white/40">
           <CardHeader className="pb-2 text-center relative">
             <div className="absolute right-0 top-0 mt-2 mr-4">
               <LanguageSelector />
             </div>
-            <motion.div
-              className="flex relative top-2 justify-center items-center px-2 mx-auto mb-4 w-72 h-auto rounded-xl"
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{
-                type: "spring",
-                stiffness: 260,
-                damping: 20,
-                delay: 0.3,
-              }}
-            >
-              <img src={Logo} alt="Logo" className="w-fit h-fit" />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-            >
+            <MemoLogoMotionDiv />
+            <MemoTitleMotionDiv>
               <CardTitle className="text-2xl font-bold text-transparent bg-clip-text card-gradient">
                 {isLogin ? t('login') : t('register')}
               </CardTitle>
-            </motion.div>
+            </MemoTitleMotionDiv>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -215,7 +249,8 @@ const AuthPage = () => {
           </CardContent>
         </Card>
       </motion.form>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 

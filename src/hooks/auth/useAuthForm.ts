@@ -41,6 +41,8 @@ const useAuthForm = () => {
     onSubmit,
     isLogin,
     toogleLogin,
+    reset,
+    clearErrors,
   };
 };
 

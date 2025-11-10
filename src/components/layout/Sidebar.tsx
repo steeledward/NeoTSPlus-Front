@@ -54,7 +54,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }: Props) => {
           <div className="flex items-center p-4 border-b border-gray-300">
             <div className="flex justify-center items-center">
               <div className="flex justify-center items-center h-16 rounded-lg">
-                <img src={Logo} alt="" className="w-full h-full" />
+                <img src={Logo} alt="Company Logo" className="w-full h-full" />
               </div>
             </div>
             <Button

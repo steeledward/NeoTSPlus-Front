@@ -48,8 +48,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const responseGetUser = await User.getUserData();
       setUser(responseGetUser);
       setIsAuthenticated(true);
-    } catch (error) {
-      console.error("Error in login:", error);
+  } catch {
       toast.error(
         "Credenciales incorrectas. Verifica que el usuario y contraseña sean correctas"
       );
@@ -62,8 +61,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await Auth.logout();
       resetAuthState();
       navigate("/auth");
-    } catch (error) {
-      console.error("Error in logout:", error);
+  } catch {
+  toast.error("Error al cerrar sesión. Intenta de nuevo.");
       resetAuthState();
     }
   };
@@ -89,13 +88,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(userData);
             setIsAuthenticated(true);
             return;
-          } catch (userError) {
-            console.error("Error al obtener datos del usuario:", userError);
+          } catch {
+            toast.error("Error al obtener datos del usuario");
           }
         }
         resetAuthState();
-      } catch (authError) {
-        console.error("Error al verificar autenticación:", authError);
+  } catch {
+  toast.error("Error al verificar autenticación");
         resetAuthState();
       } finally {
         setLoading(false);

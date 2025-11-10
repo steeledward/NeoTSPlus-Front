@@ -6,356 +6,20 @@ const DEFAULT_LICENSE_PATH = import.meta.env.VITE_LICENSE_PATH;
 
 // Clase para manejar todas las solicitudes a la API de TSPlus
 class TSPlusAPI {
-  static async downloadTSPlus() {
-    try {
-      const response = await api.post(`/commands/download_tsplus`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al descargar TS Plus: ${error.message}`);
-    }
-  }
-  // Método para obtener información del servidor
-  static async getServer(serverId: string) {
-    try {
-      const response = await api.get(
-        `http://localhost:8005/servers/servers/?arg=guid=${serverId}`
-      );
-      return response.data[0];
-    } catch (error: any) {
-      throw new Error(`Error al obtener datos del servidor: ${error.message}`);
-    }
-  }
-
-  static async installVolumeLicenseServer(
-    licenseKey: string,
-    users: string,
-    edition: string,
-    supportYears: number,
-    activatesecurityaddon?: string,
-    comments?: string
-  ) {
-    try {
-      const response = await api.post(
-        `/commands/install_tsplus/?license=${licenseKey}`,
-        {
-          users,
-          edition,
-          supportyears: supportYears,
-          activatesecurityaddon,
-          comments,
-        }
-      );
-      return response.data;
-    } catch (error: any) {
-      throw new Error(
-        `Error al instalar servidor de licencias por volumen: ${error.message}`
-      );
-    }
-  }
-
-  // Método para habilitar/deshabilitar licencias de volumen
-  static async volumeDisable(
-    license: string = DEFAULT_LICENSE,
-    option = "disable"
-  ) {
-    try {
-      const response = await api.put(
-        `/commands/volume_en_dis/?license=${license}&option=${option}`
-      );
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al procesar volumen: ${error.message}`);
-    }
-  }
-
-  static async volumeEnable(
-    license: string = DEFAULT_LICENSE,
-    option = "enable"
-  ) {
-    try {
-      const response = await api.put(
-        `/commands/volume_en_dis/?license=${license}&option=${option}`
-      );
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al procesar volumen: ${error.message}`);
-    }
-  }
-
-  // Método para activar licencias de volumen
-  static async volumeActivate(
-    license: string = DEFAULT_LICENSE,
-    option = "activate"
-  ) {
-    try {
-      const response = await api.put(
-        `/commands/volume_en_dis/?license=${license}&option=${option}`
-      );
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al procesar volumen: ${error.message}`);
-    }
-  }
-
-  // Método para actualizar licencias de volumen
-  static async updateVolume(license: string = DEFAULT_LICENSE, users: string) {
-    try {
-      const response = await api.put(
-        `/commands/update_volume/?license=${license}&users=${users}`
-      );
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al actualizar volumen: ${error.message}`);
-    }
-  }
-
-  // Método para resetear 2FA
-  static async reset2FA(user: string) {
-    try {
-      const response = await api.put(`/2FA_Reset/`, {
-        users: [user],
-      });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al resetear 2FA: ${error.message}`);
-    }
-  }
-
-  // Método para añadir usuarios a 2FA
-  static async add2FAUsers(
-    domainName: string,
-    receivedMethod: string,
-    mobilePhone: string,
-    email: string
-  ) {
-    try {
-      const response = await api.put(`/2FA_Add_Users/`, {
-        users: [
-          {
-            domainName,
-            receivedMethod,
-            mobilePhone,
-            email,
-          },
-        ],
-      });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al añadir usuarios a 2FA: ${error.message}`);
-    }
-  }
-
-  // Método para añadir grupos a 2FA
-  static async add2FAGroups(group: string) {
-    try {
-      const response = await api.put(`/2FA_Add_Groups/`, {
-        groups: [group],
-      });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al añadir grupos a 2FA: ${error.message}`);
-    }
-  }
-
-  // Método para listar usuarios de 2FA
-  static async list2FAUsers() {
-    try {
-      const response = await api.get(`/2FA_List_Users/`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al listar usuarios de 2FA: ${error.message}`);
-    }
-  }
-
-  // Método para gestionar créditos de licencia
-  static async licenseCredits(
-    license: string = DEFAULT_LICENSE,
-    edition: string,
-    login: string
-  ) {
-    try {
-      const response = await api.put(`/license_credits/?license=${license}`, {
-        login,
-        edition,
-        silent: false,
-      });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(
-        `Error al gestionar créditos de licencia: ${error.message}`
-      );
-    }
-  }
-
-  // Método para gestionar créditos de soporte
-  static async supportCredits(
-    license: string = DEFAULT_LICENSE,
-    edition: string,
-    login: string
-  ) {
-    try {
-      const response = await api.put(`/support_credits/?license=${license}`, {
-        login,
-        edition,
-        silent: false,
-      });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(
-        `Error al gestionar créditos de soporte: ${error.message}`
-      );
-    }
-  }
-
-  // Método para resetear licencia
-  static async resetLicense() {
-    try {
-      const response = await api.put(`/reset_license/`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al resetear licencia: ${error.message}`);
-    }
-  }
-
-  // Método para activar
-  static async activate(licensePath: string = DEFAULT_LICENSE_PATH) {
-    try {
-      const response = await api.post(`/activate/?licensePath=${licensePath}`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al activar: ${error.message}`);
-    }
-  }
-
-  // Método para obtener credenciales web
-  static async getWebCredentials() {
-    try {
-      const response = await api.get(`/web_credentials/`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al obtener credenciales web: ${error.message}`);
-    }
-  }
-
-  // Método para auditoría
-  static async audit() {
-    try {
-      const response = await api.put(`/audit/`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error en auditoría: ${error.message}`);
-    }
-  }
-
-  // Método para balanceo de carga
-  static async loadBalancing() {
-    try {
-      const response = await api.put(`/load_balancing/`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error en balanceo de carga: ${error.message}`);
-    }
-  }
-
-  // Método para monitor de sesión
-  static async sessionMonitor() {
-    try {
-      const response = await api.put(`/session_monitor/`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error en monitor de sesión: ${error.message}`);
-    }
-  }
-
-  // Método para gestor de sesión
-  static async sessionManager() {
-    try {
-      const response = await api.put(`/session_manager/`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error en gestor de sesión: ${error.message}`);
-    }
-  }
-
-  // Método para añadir credenciales web
-  static async addWebCredentials(
-    webLogin: string,
-    webPassword: string,
-    windowsLogin: string,
-    windowsPassword: string,
-    maximumCurrentSessions?: number // Corregido: ahora es opcional
-  ) {
-    try {
-      const response = await api.post(`/web_credentials_add/`, {
-        webLogin,
-        webPassword,
-        windowsLogin,
-        windowsPassword,
-        maximumCurrentSessions, // Se enviará 'undefined' si no se proporciona
-      });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al añadir credenciales web: ${error.message}`);
-    }
-  }
-
-  // Método para eliminar credenciales web
-  static async removeWebCredentials(webLogin: string) {
-    try {
-      const response = await api.delete(
-        `/web_credentials_remove/?webLogin=${webLogin}`
-      );
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al eliminar credenciales web: ${error.message}`);
-    }
-  }
-
-  // Método para configurar proxy
-  static async configureProxy(
-    host: string,
-    port?: number,
-    username?: string,
-    password?: string
-  ) {
-    try {
-      const response = await api.post(`/proxy/`, {
-        host,
-        port,
-        username,
-        password,
-      });
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al configurar proxy: ${error.message}`);
-    }
-  }
-
-  // Método para configurar servidor web
-  static async configureWebServer(option: string) {
-    try {
-      const response = await api.post(`/webserver/?option=${option}`);
-      return response.data;
-    } catch (error: any) {
-      throw new Error(`Error al configurar servidor web: ${error.message}`);
-    }
-  }
-
-  // Método para hacer backup de datos
+  // Backup Data Settings
   static async backupData(optionalPath?: string, silent: boolean = false) {
     try {
       const response = await api.post(`/commands/backup_data/`, {
-        optionalPath, // Enviamos la ruta opcional
-        silent, // Controlamos el modo silencioso
+        optionalPath,
+        silent,
       });
-      
       return response.data;
     } catch (error: any) {
       throw new Error(`Error al hacer backup de datos: ${error.message}`);
     }
   }
 
-  // Método para restaurar datos
+  // Restore Data Settings
   static async restoreData(restorePath: string, silent: boolean = false) {
     try {
       const response = await api.put(`/commands/restore_data/`, {
@@ -368,43 +32,308 @@ class TSPlusAPI {
     }
   }
 
-  // Método para actualizar
+  // Update
   static async update() {
     try {
-      const response = await api.put(`/update/`);
+      const response = await api.put(`/commands/update/`);
       return response.data;
     } catch (error: any) {
       throw new Error(`Error al actualizar: ${error.message}`);
     }
   }
 
-  // Método para compatibilidad con Windows
+  // Windows Compatibility Updates
   static async windowsCompatibility() {
     try {
-      const response = await api.put(`/windows_compatibility/`);
+      const response = await api.put(`/commands/windows_compatibility/`);
       return response.data;
     } catch (error: any) {
       throw new Error(`Error en compatibilidad con Windows: ${error.message}`);
     }
   }
 
-  // Método para instalar impresora
+  // Install Universal Printer
   static async installPrinter() {
     try {
-      const response = await api.post(`/install_printer/`);
+      const response = await api.post(`/commands/install_printer/`);
       return response.data;
     } catch (error: any) {
       throw new Error(`Error al instalar impresora: ${error.message}`);
     }
   }
 
-  // Método para eliminar impresora
+  // Remove Universal Printer
   static async removePrinter() {
     try {
-      const response = await api.delete(`/remove_printer/`);
+      const response = await api.delete(`/commands/remove_printer/`);
       return response.data;
     } catch (error: any) {
       throw new Error(`Error al eliminar impresora: ${error.message}`);
+    }
+  }
+
+  // Proxy Set
+  static async proxySet(host?: string, port?: number, username?: string, password?: string) {
+    try {
+      const response = await api.post(`/commands/proxy_set/`, {
+        host,
+        port,
+        username,
+        password,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al configurar proxy: ${error.message}`);
+    }
+  }
+
+  // Web Credentials
+  static async webCredentials() {
+    try {
+      const response = await api.post(`/commands/web_credentials/`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al obtener credenciales web: ${error.message}`);
+    }
+  }
+
+  // Web Credentials Add
+  static async webCredentialsAdd(webLogin: string, webPassword: string, windowsLogin: string, windowsPassword: string, maximumConcurrentSessions?: number) {
+    try {
+      const response = await api.post(`/commands/web_credentials_add/`, {
+        webLogin,
+        webPassword,
+        windowsLogin,
+        windowsPassword,
+        maximumConcurrentSessions,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al añadir credenciales web: ${error.message}`);
+    }
+  }
+
+  // Web Credentials Remove
+  static async webCredentialsRemove(webLogin: string) {
+    try {
+      const response = await api.delete(`/commands/web_credentials_remove/`, { data: { webLogin } });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al eliminar credenciales web: ${error.message}`);
+    }
+  }
+
+  // Session Manager
+  static async sessionManager() {
+    try {
+      const response = await api.post(`/commands/session_manager/`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error en gestor de sesión: ${error.message}`);
+    }
+  }
+
+  // Farm Sessions Monitor
+  static async farmSessionsMonitor() {
+    try {
+      const response = await api.post(`/commands/farm_sessions_monitor/`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error en monitor de sesiones de la granja: ${error.message}`);
+    }
+  }
+
+  // Farm LoadBalancing
+  static async farmLoadbalancing() {
+    try {
+      const response = await api.post(`/commands/farm_loadbalancing/`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error en balanceo de carga de la granja: ${error.message}`);
+    }
+  }
+
+  // System Audit
+  static async systemAudit() {
+    try {
+      const response = await api.post(`/commands/system_audit/`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error en auditoría del sistema: ${error.message}`);
+    }
+  }
+
+  // Activate License
+  static async activateLicense(licensePath: string) {
+    try {
+      const response = await api.post(`/commands/activate_license/`, { licensePath });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al activar licencia: ${error.message}`);
+    }
+  }
+
+  // License Reset
+  static async licenseReset() {
+    try {
+      const response = await api.post(`/commands/license_reset/`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al resetear licencia: ${error.message}`);
+    }
+  }
+
+  // Volume License Activate
+  static async vlActivate(licensekey: string, users?: string, edition?: string, supportyears?: number, comments?: string) {
+    try {
+      const response = await api.post(`/commands/vl_activate/`, {
+        licensekey,
+        users,
+        edition,
+        supportyears,
+        comments,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al activar licencia por volumen: ${error.message}`);
+    }
+  }
+
+  // Volume License Enable
+  static async vlEnable(licensekey: string) {
+    try {
+      const response = await api.post(`/commands/vl_enable/`, { licensekey });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al habilitar licencia por volumen: ${error.message}`);
+    }
+  }
+
+  // Volume License Disable
+  static async vlDisable(licensekey: string) {
+    try {
+      const response = await api.post(`/commands/vl_disable/`, { licensekey });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al deshabilitar licencia por volumen: ${error.message}`);
+    }
+  }
+
+  // Volume License Update
+  static async vlUpdate(licensekey: string, users?: string) {
+    try {
+      const response = await api.post(`/commands/vl_update/`, {
+        licensekey,
+        users,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al actualizar licencia por volumen: ${error.message}`);
+    }
+  }
+
+  // Volume License Credits License
+  static async vlCreditsLicense(licensekey: string, login?: string, edition?: string, silent?: boolean) {
+    try {
+      const response = await api.post(`/commands/vl_credits_license/`, {
+        licensekey,
+        login,
+        edition,
+        silent,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error en créditos de licencia por volumen: ${error.message}`);
+    }
+  }
+
+  // Volume License Credits Support
+  static async vlCreditsSupport(licensekey: string, login?: string, edition?: string, silent?: boolean) {
+    try {
+      const response = await api.post(`/commands/vl_credits_support/`, {
+        licensekey,
+        login,
+        edition,
+        silent,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error en créditos de soporte por volumen: ${error.message}`);
+    }
+  }
+
+  // 2FA Reset User
+  static async twofaResetUser(users: string[]) {
+    try {
+      const response = await api.post(`/commands/2fa_resetuser/`, { users });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al resetear usuario 2FA: ${error.message}`);
+    }
+  }
+
+  // 2FA Add Users
+  static async twofaAddUsers(userInfos: string[]) {
+    try {
+      const response = await api.post(`/commands/2fa_addusers/`, { userInfos });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al añadir usuarios 2FA: ${error.message}`);
+    }
+  }
+
+  // 2FA Add Groups
+  static async twofaAddGroups(groups: string[]) {
+    try {
+      const response = await api.post(`/commands/2fa_addgroups/`, { groups });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al añadir grupos 2FA: ${error.message}`);
+    }
+  }
+
+  // 2FA Get Users
+  static async twofaGetUsers() {
+    try {
+      const response = await api.get(`/commands/2fa_getusers/`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al obtener usuarios 2FA: ${error.message}`);
+    }
+  }
+
+  // 2FA Delete User
+  static async twofaDeleteUser(domainName: string, userType: string) {
+    try {
+      const response = await api.delete(`/commands/2fa_deleteuser/`, { data: { domainName, userType } });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al eliminar usuario 2FA: ${error.message}`);
+    }
+  }
+
+  // Windows Credential AddOrUpdate
+  static async windowsCredentialAddorupdate(csvFilePath?: string, target?: string, username?: string, password?: string) {
+    try {
+      const response = await api.post(`/commands/windowscredential_addorupdate/`, {
+        csvFilePath,
+        target,
+        username,
+        password,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al añadir/actualizar credencial de Windows: ${error.message}`);
+    }
+  }
+
+  // Windows Credential Remove
+  static async windowsCredentialRemove(csvFilePath?: string, username?: string) {
+    try {
+      const response = await api.delete(`/commands/windowscredential_remove/`, { data: { csvFilePath, username } });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al eliminar credencial de Windows: ${error.message}`);
     }
   }
 }

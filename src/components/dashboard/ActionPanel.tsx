@@ -124,7 +124,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
       );
       
       // Call the command's method
-      const response = await (commandDefinition.method as CommandMethod)(
+      const response = await (commandDefinition.api as CommandMethod)(
         ...paramArgs
       );
 

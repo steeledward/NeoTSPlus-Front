@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import type { CommandDefinition } from "@/types/command.types";
+import { useTranslation } from "react-i18next";
 import {
   Controller,
   type UseFormRegister,
@@ -16,8 +17,8 @@ import {
 
 type Props = {
   commandDefinition: CommandDefinition;
-  paramsValues: Record<string, string | number>;
-  handleParamChange: (paramId: string, value: string | number) => void;
+  paramsValues: Record<string, string | number | boolean>;
+  handleParamChange: (paramId: string, value: string | number | boolean) => void;
   register: UseFormRegister<any>;
   control: Control<any>;
   errors: any;
@@ -30,6 +31,7 @@ const CommandParamsForm = ({
   control,
   errors,
 }: Props) => {
+  const { t } = useTranslation();
   return (
     <>
       {commandDefinition && commandDefinition.params.length > 0 && (
@@ -38,7 +40,10 @@ const CommandParamsForm = ({
           {/* <h3>{commandDefinition.name}</h3> */}
           {commandDefinition.params.map((param) => (
             <div key={param.id} className="space-y-2">
-              <Label htmlFor={`param-${param.id}`}>{param.name}</Label>
+              <Label htmlFor={`param-${param.id}`}>
+                {param.name}
+                {!param.optional && <span className="text-red-500 ml-1">*</span>}
+              </Label>
               {param.selectOptions ? (
                 <Controller
                   name={param.id}
@@ -51,6 +56,8 @@ const CommandParamsForm = ({
                         field.onChange(value);
                         handleParamChange(param.id, value);
                       }}
+                      {...(!param.optional ? { required: true, 'aria-required': true } : { 'aria-required': false })}
+                      aria-invalid={!!errors[param.id]}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder={param.placeholder} />
@@ -65,6 +72,46 @@ const CommandParamsForm = ({
                     </Select>
                   )}
                 />
+              ) : param.type === "boolean" ? (
+                <Controller
+                  name={param.id}
+                  control={control}
+                  defaultValue={paramsValues[param.id] ?? false}
+                  render={({ field }) => (
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <input
+                          id={`param-${param.id}-yes`}
+                          type="radio"
+                          checked={!!field.value === true}
+                          onChange={() => {
+                            field.onChange(true);
+                            handleParamChange(param.id, true);
+                          }}
+                          className="accent-blue-600 w-4 h-4"
+                          {...(!param.optional ? { required: true, 'aria-required': true } : { 'aria-required': false })}
+                          aria-invalid={!!errors[param.id]}
+                        />
+                        <Label htmlFor={`param-${param.id}-yes`}>{t('yes')}</Label>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <input
+                          id={`param-${param.id}-no`}
+                          type="radio"
+                          checked={!!field.value === false}
+                          onChange={() => {
+                            field.onChange(false);
+                            handleParamChange(param.id, false);
+                          }}
+                          className="accent-blue-600 w-4 h-4"
+                          {...(!param.optional ? { required: true, 'aria-required': true } : { 'aria-required': false })}
+                          aria-invalid={!!errors[param.id]}
+                        />
+                        <Label htmlFor={`param-${param.id}-no`}>{t('no')}</Label>
+                      </div>
+                    </div>
+                  )}
+                />
               ) : (
                 <Controller
                   name={param.id}
@@ -75,7 +122,8 @@ const CommandParamsForm = ({
                       id={`param-${param.id}`}
                       type={param.type}
                       value={field.value}
-                      required
+                      {...(!param.optional ? { required: true, 'aria-required': true } : { 'aria-required': false })}
+                      aria-invalid={!!errors[param.id]}
                       min={param.type === "number" ? 0 : undefined}
                       placeholder={param.placeholder}
                       className="focus:ring-2 focus:ring-blue-500"
@@ -91,7 +139,7 @@ const CommandParamsForm = ({
                   )}
                 />
               )}
-              <span className="relative left-1.5 text-xs text-red-500">
+              <span className="relative left-1.5 text-xs text-red-500" aria-live="polite">
                 {errors[param.id]?.message}
               </span>
             </div>

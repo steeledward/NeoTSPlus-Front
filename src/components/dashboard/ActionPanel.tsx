@@ -1,4 +1,6 @@
 import { useState } from "react";
+// ActionPanel: UI for selecting and executing server commands
+// Integrates dynamic command parameter forms, confirmation modals, and result dialogs
 import { useTranslation } from "react-i18next";
 import {
   Card,
@@ -28,10 +30,18 @@ interface Props {
   onClose: () => void;
 }
 
-// ActionPanel allows users to select and execute commands on a server
+/**
+ * ActionPanel component
+ * Allows users to select a command, fill in dynamic parameters, and execute it on a server.
+ * Integrates CommandParamsForm for dynamic parameter input, confirmation and result modals, and error handling.
+ *
+ * Props:
+ *   - server: Server object to operate on
+ *   - onClose: callback to close the panel
+ */
 const ActionPanel = ({ server, onClose }: Props) => {
   const { t } = useTranslation();
-  // State for execution status, selected command, parameter values, and modal
+  // State for execution status, selected command, parameter values, and modal visibility
   const [isExecuting, setIsExecuting] = useState(false);
   const [selectedCommand, setSelectedCommand] = useState("");
 
@@ -45,27 +55,28 @@ const ActionPanel = ({ server, onClose }: Props) => {
   const [openModalResponse, setOpenModalResponse] = useState(false);
   const [openModalError, setOpenModalError] = useState(false);
 
+  // Accept string, number, or boolean for dynamic form values
   const [paramsValues, setParamsValues] = useState<
-    Record<string, string | number>
+    Record<string, string | number | boolean>
   >({});
 
-  // Get translated commands dynamically
+  // Get translated commands dynamically (with i18n)
   const availableCommands = getAvailableCommands(t);
-  // Find the definition for the currently selected command
+  // Find the definition for the currently selected command (for dynamic form)
   const commandDefinition = availableCommands.find(
     (command) => command.id === selectedCommand
   );
 
-  // Default schema for commands without parameters
+  // Default schema for commands without parameters (empty object)
   const defaultSchema = z.object({});
 
   // Use the schema for the selected command, or fallback to default
   const currentSchema = commandDefinition?.schema || defaultSchema;
 
-  // Infer form data type from schema
+  // Infer form data type from schema (for type safety)
   type FormData = z.infer<typeof currentSchema>;
 
-  // React Hook Form setup for command parameters
+  // React Hook Form setup for command parameters (dynamic validation)
   const {
     register,
     handleSubmit,
@@ -73,27 +84,29 @@ const ActionPanel = ({ server, onClose }: Props) => {
     formState: { errors, isValid, isDirty },
     reset,
   } = useForm<FormData>({
-    resolver: zodResolver(currentSchema as any),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(currentSchema as z.ZodType<any, any, any>),
     mode: "onChange",
   });
 
   // Handle command selection change
+  // Resets parameter values and form state
   const handleCommandChange = (value: string) => {
     setSelectedCommand(value);
     setParamsValues({});
     reset();
   };
 
-  // Handle parameter value change
-  const handleParamChange = (paramId: string, value: string | number) => {
+  // Handle parameter value change (for dynamic form fields, including boolean)
+  const handleParamChange = (paramId: string, value: string | number | boolean) => {
     setParamsValues((prev) => ({
       ...prev,
       [paramId]: value,
     }));
   };
 
-  // Check if exist path param and validate
-  const checkPathParam = (values: Record<string, string | number>) => {
+  // Check if a path parameter exists and validate its format (Windows/UNC/relative)
+  const checkPathParam = (values: Record<string, string | number | boolean>) => {
     const path = Object.entries(values).find(
       ([key]) => key.toLowerCase().includes("path")
     )?.[1];
@@ -106,7 +119,10 @@ const ActionPanel = ({ server, onClose }: Props) => {
     }
   };
 
-  // Execute the selected command with parameters
+  /**
+   * Execute the selected command with parameters
+   * Handles path validation, calls the command API, and manages modal state for results/errors
+   */
   const executedCommand = async () => {
     if (!commandDefinition) return;
 
@@ -154,16 +170,26 @@ const ActionPanel = ({ server, onClose }: Props) => {
     }
   };
 
-  // Disable the execute button if not ready
+  // Determine if all required params are filled
+  const allRequiredFilled = commandDefinition?.params
+    ? commandDefinition.params
+        .filter((param) => !param.optional)
+        .every((param) => {
+          const value = paramsValues[param.id];
+          // Accept 0, false, and non-empty string/number/boolean
+          return value !== undefined && value !== null && value !== '';
+        })
+    : true;
+
+  // Disable the execute button if not ready (valid, not executing, command selected, and all required fields filled)
   const isDisabled =
     isExecuting ||
     !commandDefinition ||
-    // If the command has parameters, check validity and changes
-    (commandDefinition?.params.length > 0 && (!isValid || !isDirty));
+    (commandDefinition?.params.length > 0 && (!isValid || !allRequiredFilled));
 
   return (
     <>
-      {/* Modal to confirm command execution */}
+      {/* Modal to confirm command execution (appears before running command) */}
       <ModalConfirmCommand
         open={openModal}
         onConfirm={() => {
@@ -174,6 +200,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
           setOpenModal(false);
         }}
       />
+      {/* Modal to show command execution result (success) */}
       <ModalResponseCommand
         open={openModalResponse}
         onConfirm={() => {
@@ -182,6 +209,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
         command={messageResponseCommand}
         response={messageResponseResponse}
       />
+      {/* Modal to show command execution error */}
       <ModalErrorCommand
         open={openModalError}
         onConfirm={() => {
@@ -189,14 +217,17 @@ const ActionPanel = ({ server, onClose }: Props) => {
         }}
         error={errorMessage}
       />
+      {/* Main card UI for command selection and execution */}
       <Card className="mt-6">
         <CardHeader className="pb-4">
           <div className="flex justify-between items-center">
             <div>
               <CardTitle className="text-lg">
+                {/* Panel title with server name */}
                 {t('action_panel_title', { server: server.nombre })}
               </CardTitle>
               <CardDescription>
+                {/* Panel description */}
                 {t('action_panel_description')}
               </CardDescription>
             </div>
@@ -224,7 +255,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
               />
             </div>
 
-            {/* Dynamic form for command parameters */}
+            {/* Dynamic form for command parameters (renders fields based on command definition) */}
             <CommandParamsForm
               commandDefinition={commandDefinition as CommandDefinition}
               paramsValues={paramsValues}
@@ -252,7 +283,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
               {isExecuting ? t('action_panel_executing') : t('action_panel_execute')}
             </Button>
 
-            {/* Placeholder for future logs button */}
+            {/* Placeholder for future logs button (not implemented) */}
             {/* <Button variant="outline">
             <Eye className="mr-2 w-4 h-4" />
             {t('action_panel_view_logs')}

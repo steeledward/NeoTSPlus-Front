@@ -126,6 +126,8 @@
   "command_result": "Command Result",
   "terminal_description": "Interactive terminal for command output and logs",
   "online": "Online",
-  "offline": "Offline"
+  "offline": "Offline",
+  "yes": "Yes",
+  "no": "No"
 }
 

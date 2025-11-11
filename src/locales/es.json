@@ -126,6 +126,8 @@
   "command_result": "Resultado del comando",
   "terminal_description": "Terminal interactivo para salida de comandos y logs",
   "online": "En línea",
-  "offline": "Desconectado"
+  "offline": "Desconectado",
+  "yes": "Sí",
+  "no": "No"
 }
 

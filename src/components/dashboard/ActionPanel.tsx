@@ -61,9 +61,9 @@ const ActionPanel = ({ server, onClose }: Props) => {
   const [openModalError, setOpenModalError] = useState(false);
   const [openModalResponse, setOpenModalResponse] = useState(false);
 
-  // Accept string, number, or boolean for dynamic form values
+  // Accept string or boolean for dynamic form values
   const [paramsValues, setParamsValues] = useState<
-    Record<string, string | number | boolean>
+    Record<string, string | boolean>
   >({});
   const selectTriggerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -124,13 +124,13 @@ const ActionPanel = ({ server, onClose }: Props) => {
   ) => {
     setParamsValues((prev) => ({
       ...prev,
-      [paramId]: value,
+      [paramId]: typeof value === 'number' ? String(value) : value,
     }));
   };
 
   // Check if a path parameter exists and validate its format (Windows/UNC/relative)
   const checkPathParam = (
-    values: Record<string, string | number | boolean>
+    values: Record<string, string | boolean>
   ) => {
     const path = Object.entries(values).find(([key]) =>
       key.toLowerCase().includes("path")
@@ -303,7 +303,7 @@ const ActionPanel = ({ server, onClose }: Props) => {
             {/* Dynamic form for command parameters (renders fields based on command definition) */}
             <CommandParamsForm
               commandDefinition={commandDefinition as CommandDefinition}
-              paramsValues={paramsValues}
+              paramsValues={paramsValues as Record<string, string | boolean | undefined>}
               handleParamChange={handleParamChange}
               register={register}
               control={control}

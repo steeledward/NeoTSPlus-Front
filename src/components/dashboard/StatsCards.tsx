@@ -4,17 +4,15 @@ import { motion } from "framer-motion";
 import React from "react";
 
 // Memoized motion.div for stat card
-const MemoStatMotionDiv = React.memo(function MemoStatMotionDiv(props: { children: React.ReactNode, index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.1 * props.index }}
-    >
-      {props.children}
-    </motion.div>
-  );
-});
+const MemoStatMotionDiv = React.memo(({ children, index }: { children: React.ReactNode; index: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.1 * index }}
+  >
+    {children}
+  </motion.div>
+));
 
 const StatsCards = () => {
   const stats = [
@@ -70,16 +68,6 @@ const StatsCards = () => {
                           : "text-red-600"
                       }`}
                     >
-// Memoized motion.div for stat card
-const MemoStatMotionDiv = React.memo(({ children, index }: { children: React.ReactNode, index: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay: 0.1 * index }}
-  >
-    {children}
-  </motion.div>
-));
                       {stat.change}
                     </p>
                   </div>
@@ -92,7 +80,7 @@ const MemoStatMotionDiv = React.memo(({ children, index }: { children: React.Rea
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </MemoStatMotionDiv>
       ))}
     </div>
   );

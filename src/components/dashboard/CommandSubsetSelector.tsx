@@ -32,7 +32,7 @@ import {
 import { useAllCommandSubsets } from "@/hooks/useCommandSubsets";
 
 interface CommandSubsetSelectorProps {
-  userId: string | undefined;
+  userId: string | number | undefined;
   selectedSubsetId: string | null;
   onSubsetChange: (subsetId: string | null) => void;
   disabled?: boolean;

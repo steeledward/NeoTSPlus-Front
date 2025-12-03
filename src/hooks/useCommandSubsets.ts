@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 /**
  * Hook to fetch all available command subsets (predefined + custom)
  */
-export function useAllCommandSubsets(userId: string | undefined) {
+export function useAllCommandSubsets(userId: string | number | undefined) {
   const { t } = useTranslation();
 
   return useQuery({
@@ -26,7 +26,7 @@ export function useAllCommandSubsets(userId: string | undefined) {
       if (!userId) return [];
 
       const predefined = getPredefinedSubsets(t);
-      const custom = getCustomSubsets(userId);
+      const custom = getCustomSubsets(String(userId));
       return [...predefined, ...custom];
     },
     enabled: !!userId,
@@ -36,12 +36,12 @@ export function useAllCommandSubsets(userId: string | undefined) {
 /**
  * Hook to fetch only custom command subsets
  */
-export function useCustomCommandSubsets(userId: string | undefined) {
+export function useCustomCommandSubsets(userId: string | number | undefined) {
   return useQuery({
     queryKey: ["customCommandSubsets", userId],
     queryFn: () => {
       if (!userId) return [];
-      return getCustomSubsets(userId);
+      return getCustomSubsets(String(userId));
     },
     enabled: !!userId,
   });
@@ -50,7 +50,7 @@ export function useCustomCommandSubsets(userId: string | undefined) {
 /**
  * Hook to create a new custom subset
  */
-export function useCreateCommandSubset(userId: string | undefined) {
+export function useCreateCommandSubset(userId: string | number | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -58,7 +58,7 @@ export function useCreateCommandSubset(userId: string | undefined) {
       subset: Omit<CommandSubset, "id" | "createdBy" | "createdAt">
     ) => {
       if (!userId) throw new Error("User ID is required");
-      return Promise.resolve(createCustomSubset(userId, subset));
+      return Promise.resolve(createCustomSubset(String(userId), subset));
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customCommandSubsets", userId] });
@@ -70,7 +70,7 @@ export function useCreateCommandSubset(userId: string | undefined) {
 /**
  * Hook to update a custom subset
  */
-export function useUpdateCommandSubset(userId: string | undefined) {
+export function useUpdateCommandSubset(userId: string | number | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -82,7 +82,7 @@ export function useUpdateCommandSubset(userId: string | undefined) {
       updates: Partial<CommandSubset>;
     }) => {
       if (!userId) throw new Error("User ID is required");
-      const result = updateCustomSubset(userId, subsetId, updates);
+      const result = updateCustomSubset(String(userId), subsetId, updates);
       if (!result) throw new Error("Subset not found");
       return Promise.resolve(result);
     },
@@ -96,13 +96,13 @@ export function useUpdateCommandSubset(userId: string | undefined) {
 /**
  * Hook to delete a custom subset
  */
-export function useDeleteCommandSubset(userId: string | undefined) {
+export function useDeleteCommandSubset(userId: string | number | undefined) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (subsetId: string) => {
       if (!userId) throw new Error("User ID is required");
-      const success = deleteCustomSubset(userId, subsetId);
+      const success = deleteCustomSubset(String(userId), subsetId);
       if (!success) throw new Error("Subset not found");
       return Promise.resolve(true);
     },

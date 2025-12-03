@@ -17,7 +17,7 @@ import {
 
 type Props = {
   commandDefinition: CommandDefinition;
-  paramsValues: Record<string, string | number | boolean>;
+  paramsValues: Record<string, string | boolean | undefined>;
   handleParamChange: (paramId: string, value: string | number | boolean) => void;
   register: UseFormRegister<any>;
   control: Control<any>;
@@ -48,7 +48,7 @@ const CommandParamsForm = ({
                 <Controller
                   name={param.id}
                   control={control}
-                  defaultValue={paramsValues[param.id] || ""}
+                  defaultValue={(paramsValues[param.id] as string | undefined) || ""}
                   rules={!param.optional ? { required: (t('field_required') as unknown as string) } : undefined}
                   render={({ field }) => (
                     <Select
@@ -117,7 +117,7 @@ const CommandParamsForm = ({
                 <Controller
                   name={param.id}
                   control={control}
-                  defaultValue={paramsValues[param.id] || ""}
+                  defaultValue={(paramsValues[param.id] as string | undefined) || ""}
                   render={({ field }) => (
                     <Input
                       id={`param-${param.id}`}

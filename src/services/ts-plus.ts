@@ -1,9 +1,5 @@
 import api from "@/utils/api";
 
-// Variables de configuración para pruebas - Modifica estas constantes para tus pruebas
-const DEFAULT_LICENSE = import.meta.env.VITE_LICENCE;
-const DEFAULT_LICENSE_PATH = import.meta.env.VITE_LICENSE_PATH;
-
 // Clase para manejar todas las solicitudes a la API de TSPlus
 class TSPlusAPI {
   // Backup Data Settings

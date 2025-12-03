@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
-import { Activity, LogOut, X } from "lucide-react";
+import { Activity, LogOut, X, Layers } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/assets/logo/Logo_horizontal.png";
 
@@ -18,6 +18,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }: Props) => {
 
   const menuItems = [
     { icon: Activity, label: t('sidebar_servers'), path: "/dashboard", count: null },
+    { icon: Layers, label: t('command_groups_menu'), path: "/command-groups", count: null },
     // { icon: Activity, label: t('sidebar_monitoring'), path: "/monitoring", count: null },
     // { icon: Users, label: t('sidebar_users'), path: "/users", count: null },
     // { icon: Settings, label: t('sidebar_settings'), path: "/settings", count: null },

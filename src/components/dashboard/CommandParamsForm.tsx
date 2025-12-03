@@ -49,6 +49,7 @@ const CommandParamsForm = ({
                   name={param.id}
                   control={control}
                   defaultValue={paramsValues[param.id] || ""}
+                  rules={!param.optional ? { required: (t('field_required') as unknown as string) } : undefined}
                   render={({ field }) => (
                     <Select
                       value={field.value}
@@ -56,7 +57,7 @@ const CommandParamsForm = ({
                         field.onChange(value);
                         handleParamChange(param.id, value);
                       }}
-                      {...(!param.optional ? { required: true, 'aria-required': true } : { 'aria-required': false })}
+                      {...(!param.optional ? { 'aria-required': true } : { 'aria-required': false })}
                       aria-invalid={!!errors[param.id]}
                     >
                       <SelectTrigger className="w-full">

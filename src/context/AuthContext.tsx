@@ -59,11 +59,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = async () => {
     try {
       await Auth.logout();
+    } catch (error) {
+      // Log the error but don't block logout even if the server request fails
+      console.error("Error during logout API call:", error);
+      // Still proceed with local logout
+    } finally {
       resetAuthState();
       navigate("/auth");
-  } catch {
-  toast.error("Error al cerrar sesión. Intenta de nuevo.");
-      resetAuthState();
     }
   };
 

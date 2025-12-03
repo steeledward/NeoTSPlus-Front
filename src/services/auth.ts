@@ -12,6 +12,8 @@ class Auth {
 
   static async logout() {
     const response = await api.delete("/auth");
+    console.log(response);
+    
     return response.data;
   }
 

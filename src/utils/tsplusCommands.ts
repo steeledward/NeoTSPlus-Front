@@ -32,6 +32,27 @@ export function getAvailableCommands(t: TFunction): CommandDefinition[] {
       api: TSPlusAPI.restoreData,
     },
     {
+      id: "web_server",
+      name: t("cmd_web_server"),
+      route: "/commands/web_server",
+      method: "POST",
+      description: t("cmd_web_server_desc"),
+      params: [
+        {
+          id: "command",
+          name: t("Command"),
+          type: "select",
+          optional: false,
+          selectOptions: [
+            { id: "/webstart", value: "Start" },
+            { id: "/webstop", value: "Stop" },
+            { id: "/webrestart", value: "Restart" },
+          ]
+        },
+      ],
+      api: TSPlusAPI.webServer,
+    },
+    {
       id: "update",
       name: t("cmd_update"),
       route: "/commands/update/",
@@ -78,10 +99,19 @@ export function getAvailableCommands(t: TFunction): CommandDefinition[] {
       method: "POST",
       description: t("cmd_proxy_set_desc"),
       params: [
-        { id: "host", name: "Host", type: "text", optional: true },
-        { id: "port", name: "Port", type: "number", optional: true },
-        { id: "username", name: "Username", type: "text", optional: true },
-        { id: "password", name: "Password", type: "text", optional: true },
+        {
+          id: "command",
+          name: "Command",
+          type: "select",
+          optional: false,
+          selectOptions: [
+            { id: "/host", value: "Host" },
+            { id: "/port", value: "Port" },
+            { id: "/username", value: "Username" },
+            { id: "/password", value: "Password" },
+          ]
+        },
+        { id: "params", name: "Params", type: "text", optional: false },
       ],
       api: TSPlusAPI.proxySet,
     },
@@ -334,4 +364,72 @@ export function getAvailableCommands(t: TFunction): CommandDefinition[] {
       api: TSPlusAPI.windowsCredentialRemove,
     },
   ];
+}
+
+/**
+ * Get command IDs for a specific command subset
+ * Returns the list of command IDs that belong to the given subset
+ */
+export function getCommandsForSubset(subsetId: string): string[] {
+  // Map of subset IDs to command IDs
+  const subsetMap: Record<string, string[]> = {
+    // Maintenance: backup, restore, update, windows compatibility
+    subset_maintenance: [
+      "backup_data",
+      "restore_data",
+      "update",
+      "windows_compatibility",
+    ],
+    // Web Management: web_server, web_credentials, web_credentials_add, web_credentials_remove
+    subset_web_management: [
+      "web_server",
+      "web_credentials",
+      "web_credentials_add",
+      "web_credentials_remove",
+    ],
+    // Licensing: all volume licensing and license management commands
+    subset_licensing: [
+      "activate_license",
+      "license_reset",
+      "vl_activate",
+      "vl_enable",
+      "vl_disable",
+      "vl_update",
+      "vl_credits_license",
+      "vl_credits_support",
+    ],
+    // Security: 2FA and Windows credentials
+    subset_security: [
+      "2fa_resetuser",
+      "2fa_addusers",
+      "2fa_addgroups",
+      "2fa_getusers",
+      "2fa_deleteuser",
+      "windowscredential_addorupdate",
+      "windowscredential_remove",
+    ],
+    // Farm Management: session manager, farm sessions, load balancing
+    subset_farm_management: [
+      "session_manager",
+      "farm_sessions_monitor",
+      "farm_loadbalancing",
+    ],
+    // Printer Management: install and remove printer
+    subset_printer_management: [
+      "install_printer",
+      "remove_printer",
+    ],
+    // Proxy Management: proxy settings
+    subset_proxy_management: [
+      "proxy_set",
+    ],
+  };
+
+  // Return custom subset commands from localStorage
+  if (subsetId.startsWith("custom_")) {
+    // TODO: Fetch from custom subsets service
+    return [];
+  }
+
+  return subsetMap[subsetId] || [];
 }

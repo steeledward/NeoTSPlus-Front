@@ -26,6 +26,8 @@ interface Props {
   placeholder?: string;
   className?: string;
   contentClassName?: string;
+  // optional ref forwarded to the SelectTrigger (for focusing)
+  triggerRef?: React.Ref<HTMLButtonElement>;
 }
 
 
@@ -38,6 +40,7 @@ const SelectWithTooltip = ({
   placeholder,
   className = "w-full",
   contentClassName = "max-h-[200px]",
+  triggerRef,
 }: Props) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -52,7 +55,7 @@ const SelectWithTooltip = ({
         value={value}
         onValueChange={onChange}
       >
-        <SelectTrigger id={id} className={className}>
+        <SelectTrigger id={id} className={className} ref={triggerRef}>
             <SelectValue placeholder={resolvedPlaceholder} />
         </SelectTrigger>
         <SelectContent className={cn("overflow-y-auto", contentClassName)}>

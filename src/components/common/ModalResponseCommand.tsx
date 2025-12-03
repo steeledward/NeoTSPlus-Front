@@ -40,7 +40,7 @@ const ModalConfirmCommand = ({ open, onConfirm, command, response }: Props) => {
           <br />$ {response}
         </div>
         <AlertDialogFooter>
-          <AlertDialogAction onClick={onConfirm}>{t('acknowledge')}</AlertDialogAction>
+          <AlertDialogAction onClick={onConfirm}>{t('Acknowledge')}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -7,6 +7,7 @@ import ServersPage from "./pages/ServersPage";
 import MonitoringPage from "./pages/MonitoringPage";
 import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
+import CommandGroupsPage from "./pages/CommandGroupsPage";
 import { Toaster } from "sonner";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import RedirectToDashboard from "./components/common/RedirectRoute";
@@ -65,6 +66,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/command-groups"
+            element={
+              <ProtectedRoute>
+                <CommandGroupsPage />
               </ProtectedRoute>
             }
           />

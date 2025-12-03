@@ -19,6 +19,18 @@ class TSPlusAPI {
     }
   }
 
+  // Web Server Commands
+  static async webServer(command: string) {
+    try {
+      const response = await api.post(`/commands/web_server/`, {
+        command,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(`Error al ejecutar comando del servidor web: ${error.message}`);
+    }
+  }
+
   // Restore Data Settings
   static async restoreData(restorePath: string, silent: boolean = false) {
     try {
@@ -73,13 +85,11 @@ class TSPlusAPI {
   }
 
   // Proxy Set
-  static async proxySet(host?: string, port?: number, username?: string, password?: string) {
+  static async proxySet(command: string, params: string) {
     try {
       const response = await api.post(`/commands/proxy_set/`, {
-        host,
-        port,
-        username,
-        password,
+        command,
+        params,
       });
       return response.data;
     } catch (error: any) {

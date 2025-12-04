@@ -166,6 +166,12 @@
   "saving": "Guardando...",
   "save": "Guardar",
   "selected": "seleccionado",
-  "no_commands_available": "No hay comandos disponibles"
+  "no_commands_available": "No hay comandos disponibles",
+  "activity_logs_menu": "Registros de Actividad",
+  "activity_logs": "Registros de Actividad",
+  "activity_logs_description": "Ver todos los registros de actividad y auditoría del sistema",
+  "no_activity_logs": "No se encontraron registros de actividad",
+  "error_loading_activity_logs": "Error al cargar los registros de actividad",
+  "resource": "Recurso"
 }
 

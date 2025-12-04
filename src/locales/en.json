@@ -166,6 +166,11 @@
   "saving": "Saving...",
   "save": "Save",
   "selected": "selected",
-  "no_commands_available": "No commands available"
+  "no_commands_available": "No commands available",
+  "activity_logs_menu": "Activity Logs",
+  "activity_logs": "Activity Logs",
+  "activity_logs_description": "View all system activity and audit logs",
+  "no_activity_logs": "No activity logs found",
+  "error_loading_activity_logs": "Error loading activity logs",
+  "resource": "Resource"
 }
-

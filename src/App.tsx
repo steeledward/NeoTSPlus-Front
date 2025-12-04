@@ -8,6 +8,7 @@ import MonitoringPage from "./pages/MonitoringPage";
 import UsersPage from "./pages/UsersPage";
 import SettingsPage from "./pages/SettingsPage";
 import CommandGroupsPage from "./pages/CommandGroupsPage";
+import ActivityLogPage from "./pages/ActivityLogPage";
 import { Toaster } from "sonner";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import RedirectToDashboard from "./components/common/RedirectRoute";
@@ -74,6 +75,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <CommandGroupsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/activity-logs"
+            element={
+              <ProtectedRoute>
+                <ActivityLogPage />
               </ProtectedRoute>
             }
           />
